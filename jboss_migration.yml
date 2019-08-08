@@ -1,0 +1,27 @@
+---
+- name: JBoss EAP migration
+  hosts: all
+  become: true
+  gather_facts: false
+  strategy: free
+  vars:
+    current_eap_home: "/opt/jboss-eap-7.1"
+    new_eap_home: "/opt/jboss-eap-7.2"
+
+  tasks:
+    - name: Copy and extract jboss eap compress file to remote machine
+      unarchive:
+        src: jboss-eap-7.2.tar
+        dest: /opt/
+        owner: jboss
+        group: jboss
+
+    - name: Migrate configuration
+      command: ./jboss-server-migration.sh -s "{{ current_eap_home }}" -i false
+      args:
+        chdir: "{{ new_eap_home }}/bin"
+      register: resultado
+
+    - name: Migration Results
+      debug: 
+        msg: "{{resultado.stdout}}"

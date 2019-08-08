@@ -1,0 +1,26 @@
+---
+- name: JBoss deploy wars
+  hosts: dc
+  become: true
+  gather_facts: false
+  vars:
+    eap_home: "/opt/jboss-eap-7.2/"
+    sg: "A"
+    jdk: "8"
+  tasks:
+    - name: copy batch file
+      template:
+        src: template/deploy-{{ jdk }}.cli.j2
+        dest: /tmp/batch.cli
+        owner: jboss
+        group: jboss
+
+    - name: deploy all war from group {{ sg }}
+      shell: "./jboss-cli.sh -c --controller=192.168.102.236:9990 --file=/tmp/batch.cli"
+      args:
+        chdir: "{{ eap_home }}/bin"
+
+    - name: clean up
+      file:
+        path: /tmp/batch.cli
+        state: absent

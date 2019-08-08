@@ -1,0 +1,5 @@
+{% for item in war_to_deploy %}
+    {% for app in item.war %}
+    deploy /tmp/wars-{{ jdk }}/{{ app }} --disabled
+    {% endfor %}
+{% endfor %}

@@ -1,0 +1,15 @@
+[all]
+master ansible_host=192.168.102.236
+slave1 ansible_host=192.168.102.237 
+slave2 ansible_host=192.168.102.235
+
+
+[dc]
+master
+
+[group_a]
+slave1
+
+
+[group_b]
+slave2

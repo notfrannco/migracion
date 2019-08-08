@@ -1,0 +1,42 @@
+---
+- name: JBoss eap migration
+  become: true
+  gather_facts: false
+  strategy: free
+  vars:
+    current_eap_home: "/opt/jboss-eap-7.1"
+    eap_home: "/opt/jboss-eap-{{ eap }}"
+    eap_service: "jboss-eap"
+    target: "dc"
+    jdk_version: "{{ jdk }}"
+
+  hosts: "{{ target }}"
+
+  tasks:
+    - name: change owner
+      shell: "chown -R jboss:jboss {{ eap_home }}"
+
+    - name: update jboss eap service daemon 
+      lineinfile:
+        path: /etc/default/jboss-eap.conf
+        regexp: 'JBOSS_HOME='
+        line: JBOSS_HOME={{ eap_home }}
+
+    - name: configure eap with jdk 11
+      lineinfile:
+        path: /etc/default/jboss-eap.conf
+        regexp: 'JAVA_HOME='
+        line: '#JAVA_HOME=/usr/java/default' 
+      when: jdk_version == "11"
+      
+    - name: configure eap with jdk 8 
+      lineinfile:
+        path: /etc/default/jboss-eap.conf
+        regexp: 'JAVA_HOME='
+        line: 'JAVA_HOME=/usr/java/default' 
+      when: jdk_version == "8"
+
+    - name: restart jboss-eap service
+      service:
+        name: "{{ eap_service }}"
+        state: restarted

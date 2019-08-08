@@ -1,0 +1,7 @@
+---
+war_to_deploy:
+  - group: server-group
+    war: 
+      - app1.war
+      - app2.war
+      - app3.war
