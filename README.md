@@ -10,6 +10,7 @@
    - upload new wars to the jboss eap repo
 
 4) server-group A
+
    4.1) jboss_undeploy_all.yml
         - undeploy all wars from server-group A
 
