@@ -2,7 +2,6 @@
 - name: JBoss deploy wars
   hosts: dc
   become: true
-  gather_facts: false
   vars:
     eap_home: "/opt/jboss-eap-7.2/"
     sg: "A"
@@ -16,9 +15,10 @@
         group: jboss
 
     - name: deploy all war from group {{ sg }}
-      shell: "./jboss-cli.sh -c --controller=192.168.102.236:9990 --file=/tmp/batch.cli"
+      shell: "./jboss-cli.sh -c --controller={{ ansible_facts['default_ipv4']['address'] }}:9990 --file=/tmp/batch.cli"
       args:
         chdir: "{{ eap_home }}/bin"
+      ignore_errors: true
 
     - name: clean up
       file:

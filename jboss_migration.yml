@@ -23,5 +23,5 @@
       register: resultado
 
     - name: Migration Results
-      debug: 
+      debug:
         msg: "{{resultado.stdout}}"

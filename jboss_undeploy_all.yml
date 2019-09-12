@@ -1,5 +1,5 @@
 ---
-- name: JBoss undeploy wars 
+- name: JBoss undeploy wars
   hosts: dc
   become: true
   gather_facts: true
@@ -11,12 +11,14 @@
       shell: ./jboss-cli.sh -c --controller={{ ansible_facts['default_ipv4']['address'] }}:9990 --command="ls server-group" | tr " " "\n" | sed "/^$/d" | grep {{ sg }}
       args:
         chdir: "{{ eap_home }}/bin"
-      register: server_group_list 
+      register: server_group_list
 
-    - debug:
+    - name: Show list of sever group
+      debug:
         msg: "{{ server_group_list.stdout_lines }}"
 
-    - set_fact:
+    - name: Set facts list of sever gropus
+      set_fact:
         server_groups: "{{ server_group_list.stdout_lines }}"
 
     - name: copy batch file

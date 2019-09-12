@@ -1,0 +1,28 @@
+---
+- name: Playbook for patch apply on JBoss EAP
+  hosts: all
+  vars:
+    patch_file: "jboss-eap-7.2.3-patch.zip"
+    eap_home: "/opt/jboss-eap-7.2/"
+    remote_dest: "/tmp/"
+  become: true
+  strategy: free
+  tasks:
+    - name: Copy patch file
+      copy:
+        src: 'files/{{ patch_file }}'
+        dest: '{{ remote_dest }}'
+        mode: 0755
+
+    - name: Run patch script
+      shell: './jboss-cli.sh --command="patch apply {{ remote_dest }}{{ patch_file }}"'
+      args:
+        chdir: "{{ eap_home }}/bin/"
+      ignore_errors: true
+
+    - name: cleanup
+      file:
+        path: "{{ remote_dest }}{{ patch_file }}"
+        state: absent
+...
+
